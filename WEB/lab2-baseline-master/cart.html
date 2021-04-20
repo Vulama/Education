@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Flower power!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/png" href="images/flower-icon.png" />
+    <link rel="stylesheet" type="text/css" href="vendor/normalize.css">
+    <link rel="stylesheet" type="text/css" href="styles/main.css">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <script src="./scripts/main.js"></script>
+</head>
+
+
+<body class="content body-header-fixed">
+    <header class="header header-fixed primary-color-bg">
+        <nav class="navigation container">
+            <div class="menu">
+                <a href="index.html" class="link menu-item">Home</a>
+                <a href="order.html" class="link menu-item">Order</a>
+                <a href="index.html" class="link">
+                    <img class="scaled-image scaled-image-fixed" src="images/logo.svg" alt="Company logo">
+                </a>
+                <a href="#" class="link menu-item" onclick="resetFunction()">Contact us</a>
+                <a href="#" class="link menu-item cart-menu cart-menu-active link-active" onclick="alertBucket()">
+                    <img src="images/cart-icon.svg" alt="Cart icon">
+                    <div class="cart-menu-status">
+                        <div id="cart-items">0</div>
+                        <div>items</div>
+                    </div>
+                </a>
+            </div>
+        </nav>
+    </header>
+    <main class="main">
+        <div class="centered-container">
+            <h1 class="decorated-title font-secondary main-color">
+                <span class="main-color-emphasized">Shoping cart</span>
+                items</h1>
+            <div class="separator"></div>
+        </div>
+
+        <div class="gallery">
+            <div></div>
+            <div class="cart-header">
+                <button class="cart-header-title" id="product-button" onclick="sortByName()">Product</button>
+                <button class="cart-header-title" id="price-button" onclick="sortByPrice()">Price</button>
+                <button class="cart-header-title" id="quantity-button" onclick="sortByQuantity()">Quantity</button>
+            </div>
+        </div>
+        <div class="gallery">
+            <div></div>
+            <div id="fill"></div>
+        </div>
+        
+        
+    </main>
+    <footer class="footer">
+        <div class="container">
+            <div class="menu menu-distributed">
+                <div class="infobox infobox-marginless infobox-copyright">
+                    <h4 class="infobox-title infobox-title-secondary-color main-color-emphasized">
+                        Copy this as much as you like
+                    </h4>
+                </div>
+                <div class="infobox infobox-marginless infobox-flower">
+                    <h4 class="infobox-title infobox-title-secondary-color main-color-emphasized">
+                        Flower power
+                    </h4>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <template id="cart-template-header">
+        <div class="cart-header">
+            <div class="cart-header">
+                <button class="cart-header-title" id="product-button">Product</button>
+                <button class="cart-header-title" id="price-button">Price</button>
+                <button class="cart-header-title" id="quantity-button">Quantity</button>
+            </div>
+        </div>
+    </template>
+
+    <template id="cart-template-item">
+        <div class="cart-item">
+            <div class="cart-item-title">Tulips</div>
+            <div class="cart-item-price">15 kn</div>
+            <input type="number" class="cart-item-quantity"></input>
+        </div>
+
+
+    </template>
+    <template id="category-template">
+        <section class="section secondary-color-bg">
+            <div class="centered-container">
+                <h1 class="decorated-title font-secondary main-color">
+                    <span class="main-color-emphasized">Category name</span>
+                    Inventory</h1>
+                <div class="separator"></div>
+            </div>
+            <div class="gallery">
+            </div>
+        </section>
+    </template>
+    <template id="product-template">
+        <div class="photo-box" id="">
+            <img class="photo-box-image" src=""></img>
+            <div class="photo-box-title font-secondary main-color-emphasized">Product name</div>
+            <div class="cart-btn" onclick=""></div>
+        </div>
+    </template>
+    <script>
+
+        let sortByName=async function(){
+            var ids = window.localStorage.ids.split(",");
+            var names=[];
+            for(var i=1;i<ids.length;i++){
+                let response = await fetch("https://web1lab2.azurewebsites.net/products/" + ids[i]);
+                let data = await response.json();
+                names.push(data.name);
+            }
+            for(var i=0;i<names.length-1;i++){
+                for(var j=1;j<names.length;i++){
+                    if(names[i]>names[j]){
+                        var temp=names[i];
+                        names[i]=names[j];
+                        names[j]=temp;
+
+                        temp=ids[i+1];
+                        ids[i+1]=ids[j+1];
+                        ids[j+1]=temp;
+                    }
+                }
+            }
+            let into = document.querySelector("#fill");
+            let passed = [];
+            let toBeAppended = document.querySelector("#cart-template-item")
+            let appendedId=[];
+
+            if(ids[1] != ""){
+                for(let id = 1; id < ids.length; id++){
+                    if(passed[ids[id]] == null){
+                        passed[ids[id]] = 1;
+                    }else{
+                        passed[ids[id]] = Number(passed[ids[id]]) + 1;
+                    }
+                }
+
+                for(let id = 1; id < ids.length; id++){
+                    let itemAppend = toBeAppended.content.cloneNode(true);
+                    let response = await fetch("https://web1lab2.azurewebsites.net/products/" + ids[id]);
+                    let data = await response.json();
+
+                        if(!appendedId[ids[id]]){
+                            appendedId[ids[id]] = 1;
+
+                            var lista = window.localStorage.ids.split(',');
+                            lista.push(ids[id]);
+                            window.localStorage.ids=lista;
+
+                            itemAppend.querySelector(".cart-item-title").textContent = data.name;
+                            itemAppend.querySelector(".cart-item-price").textContent = data.price + " kn";
+                            itemAppend.querySelector(".cart-item-quantity").value = passed[ids[id]];
+                            into.appendChild(itemAppend);
+                        }
+                }
+            }
+
+        }
+        
+        let onStartup = async function(){
+            document.getElementById('cart-items').textContent=window.localStorage.counter;
+            let into = document.querySelector("#fill");
+            let ids = localStorage.arr.split(",");
+            let passed = [];
+            let toBeAppended = document.querySelector("#cart-template-item")
+            let appendedId=[];
+
+            if(ids[1] != ""){
+                for(let id = 1; id < ids.length; id++){
+                    if(passed[ids[id]] == null){
+                        passed[ids[id]] = 1;
+                    }else{
+                        passed[ids[id]] = Number(passed[ids[id]]) + 1;
+                    }
+                }
+
+                for(let id = 1; id < ids.length; id++){
+                    let itemAppend = toBeAppended.content.cloneNode(true);
+                    let response = await fetch("https://web1lab2.azurewebsites.net/products/" + ids[id]);
+                    let data = await response.json();
+
+                        if(!appendedId[ids[id]]){
+                            appendedId[ids[id]] = 1;
+
+                            var lista = window.localStorage.ids.split(',');
+                            lista.push(ids[id]);
+                            window.localStorage.ids=lista;
+
+                            itemAppend.querySelector(".cart-item-title").textContent = data.name;
+                            itemAppend.querySelector(".cart-item-price").textContent = data.price + " kn";
+                            itemAppend.querySelector(".cart-item-quantity").value = passed[ids[id]];
+                            into.appendChild(itemAppend);
+                        }
+                }
+            }
+
+        }
+
+        onStartup();
+		
+    </script>
+</body>
+
+</html>
