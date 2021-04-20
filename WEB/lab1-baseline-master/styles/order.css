@@ -1,0 +1,65 @@
+
+.grid-container {
+display: grid;
+grid-template-columns: 1fr 1fr 1fr;
+margin-bottom: 30px;
+}
+
+.img{
+    height: 200px;
+    width: 200px;
+    margin-bottom: 0px;
+    object-fit: cover;
+}
+
+.grid-container2 {
+    display: grid;
+    grid-template-areas:
+      'lijevo desnog'
+      'lijevo desnod';
+    grid-template-columns: 1fr 5fr;
+    grid-gap: 10px;
+}
+.grid-container2 > div {
+    text-align: center;
+    font-size: 18px;
+}
+
+.item1 {
+    grid-area: lijevo;
+}
+.item2 { 
+    grid-area: desnog;
+}
+.item3 { 
+    grid-area: desnod; 
+}
+
+
+
+input[type=text]{
+    border-radius: 4px;
+    border-width: thin;
+    border-color: #e0aacd;
+}
+
+input[type=text]:focus {
+    background-color: #e0aacd;
+  }
+
+button{
+    align-self: center;
+    background-color: rgb(128, 13, 128);
+    border-color: rgb(128, 13, 128);
+    color: white;
+    font-size: 15px;
+    font-weight: normal;
+    padding: 9px 13px;
+    border-radius: 4px;
+    margin-bottom: 3%;
+    
+}
+
+#btn:active {
+    background-color:#e0aacd;
+}
